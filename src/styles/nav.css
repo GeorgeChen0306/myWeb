@@ -1,0 +1,43 @@
+
+body {
+    margin: 0;
+}
+
+.nav{
+    background-color: black;
+    color:white;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 2rem;
+    /*padding: 0 10rem;*/
+}
+
+.nav a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 20px 50px;
+    text-decoration: none;
+}
+
+.nav a:hover {
+    background-color: lightgray;
+}
+
+.nav ul {
+    /* padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    gap: 1 rem; */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #272626;
+}
+
+.nav li {
+    float: left;
+}
