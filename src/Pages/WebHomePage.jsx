@@ -8,6 +8,7 @@ const HomePage = () => {
             <p>Hello! Welcome to my web page. There are currently two pages you can visit, namely, the pokemon and user pages</p>
             <p>In the pokemon page, you will be able to select a pokemon from the drop-down list and it will give you their weight</p>
             <p>In the user page, you will be able to see all the user(s) that are in the database and also add a user to the database</p>
+            <img src="/matrix.jpg" alt="matrix"></img>
         </>
     )
 }

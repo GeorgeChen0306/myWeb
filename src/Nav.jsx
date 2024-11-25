@@ -16,6 +16,9 @@ const Nav = () => {
                     <li>
                         <Link to="/pokemon">Pokemon</Link>
                     </li>
+                    <li>
+                        <Link to="/login">Login</Link>
+                    </li>
                 </ul>
             </nav>
         </>
