@@ -15,6 +15,13 @@ function randomPasswordGenerator(){
 }
 
 async function createUser(username, password, role, User){
+    const userExist = await User.find({user: username});
+    if (userExist.length > 0){
+        return ({
+                    success: false,
+                    message: `${username} already existed`
+                })
+    }
     var pass = "";
     if (!password){
         pass = randomPasswordGenerator();

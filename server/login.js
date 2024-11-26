@@ -14,7 +14,8 @@ async function verifyCredentials(username, password, User, secretKey){
             const result = await createToken(username, check[0]["role"], secretKey);
             return ({
                         success: true,
-                        token: result
+                        token: result,
+                        role: check[0]["role"]
                     })
         }
         else{

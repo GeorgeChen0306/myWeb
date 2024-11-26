@@ -25,9 +25,6 @@ async function verifyRedirect(token, secretKey){
             return ({isAuthorized: false})
         }
         else {
-            console.log("Decoded role");
-            console.log(decoded);
-            console.log(decoded.role);
             return (
                 {
                     isAuthorized: true,

@@ -29,11 +29,17 @@ async function addNewUser(username, password, role, User){
             role: role,
             loginAttempt: 0,
         })
-        return ({success: true, user})
+        return ({
+                    success: true, 
+                    message: `Your account has been successfully created`
+                })
     }
     catch(error){
         console.error(error)
-        return ({success: false});
+        return ({
+                    success: false,
+                    message: "Error when creating the account. Please try again."
+                });
     }
 }
 
