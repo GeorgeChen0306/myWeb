@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Nav from "../Nav";
 
-const Pokemon = () => {
+const Pokemon = ({role}) => {
 
     const [pokemonData, setPokemonData] = useState(null);
     const [showData, setShowData] = useState(false);

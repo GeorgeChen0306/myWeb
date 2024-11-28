@@ -7,6 +7,7 @@ import Pokemon from "./Pages/PokemonPage";
 import UserHome from "./Pages/UserHome";
 import Login from "./Pages/Login";
 import AdminHome from "./Pages/AdminHome";
+import MyProfile from "./Pages/Profile";
 
 //TODO: Finish Protected Route
 //      Finish Admin Routes
@@ -40,7 +41,7 @@ function App() {
   }
 
   // Check for user routes token
-  async function checkUserToken(token){
+  async function checkToken(token){
     try{
       const response = await fetch("/api/verify", {
         method: "POST",
@@ -98,12 +99,8 @@ function App() {
             else if (data.redirect === "admin"){
               navigate("/admin");
             }
-            else{
-              //
-            }
           }
           else {
-            console.log("Expired")
             localStorage.removeItem("LoginToken");
             setIsLoading(false);
           }
@@ -125,6 +122,36 @@ function App() {
   // Logic to handle admin routes
   const AdminRoute = () => {
 
+    const navigate = useNavigate();
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      const verify = async() =>{
+        try{
+          const token = localStorage.getItem("LoginToken");
+          if (!token){
+            setIsLoading(false);
+            return;
+          }
+  
+          const data = await checkToken(token);
+          console.log(data);
+          setIsAuthorized(data.isAuthorized);
+          setIsLoading(false);
+        }
+        catch(error){
+          console.error(error)
+        }
+      }
+      verify();
+  },[])
+
+    if (isLoading){
+      return <h1>Waiting....</h1>
+    }
+    return (isAuthorized ? <Outlet /> : navigate("/login"))
+
   }
 
   // Logic to handle normal user routes
@@ -143,8 +170,7 @@ function App() {
             return;
           }
   
-          const data = await checkUserToken(token);
-          console.log(data);
+          const data = await checkToken(token);
           setIsAuthorized(data.isAuthorized);
           setIsLoading(false);
         }
@@ -167,16 +193,17 @@ function App() {
         <header className="App-header">
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
-            <Route path="/users" element={<Users />}></Route>
             <Route path="/pokemon" element={<Pokemon />}></Route>
             <Route element={<ProtectedRoute />}>
               <Route path="/login" element={<Login />}></Route>
             </Route>
             <Route element={<UserRoute />}>
               <Route path="/user" element={<UserHome />}></Route>
+              <Route path="/user/profile" element={<MyProfile />}></Route>
             </Route>
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<AdminHome />}></Route>
+              <Route path="/admin/users" element={<Users />}></Route>
             </Route>
             <Route path="/*" element={<h1>ERROR 404: Page Not Found</h1>}></Route>
           </Routes>

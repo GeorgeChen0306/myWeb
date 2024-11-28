@@ -34,7 +34,8 @@ const Login = () =>{
             
             if (result.success){
                 localStorage.setItem("LoginToken", result.token); 
-                navigate("/user");
+                if (result.role === "user") navigate("/user");
+                else if (result.role === "admin") navigate("/admin");
             }
             else {
                 console.log(result.message);
@@ -65,7 +66,14 @@ const Login = () =>{
     
             const result = await response.json();
     
-            console.log(result);    
+            if (result.success){
+                window.alert(result.message);
+                setNewAccountUserName("");
+                setNewAccountPassword("");
+            }
+            else {
+                window.alert(result.message)
+            }    
         }
         catch(error){
             console.error(error)
@@ -90,7 +98,8 @@ const Login = () =>{
         createNewAccount(newAccountUserName, newAccountPassword);
     }
 
-    function switchPage(){
+    function switchPage(e){
+        e.preventDefault();
         if (!noAccount) {
             setLoginUserName("");
             setLoginPassword("");
@@ -137,7 +146,7 @@ const Login = () =>{
                 
                 <br />
                 <br />
-                <button onClick={() => switchPage()}>No Account? Click here to sign up!</button>
+                <button onClick={(e) => switchPage(e)}>No Account? Click here to sign up!</button>
             </>
             :
             <>
@@ -161,7 +170,7 @@ const Login = () =>{
                     <br />
                     <br />
                     <br />
-                    <button onClick={() => switchPage()}>Go Back</button>
+                    <button onClick={(e) => switchPage(e)}>Go Back</button>
                 </form>
             </>
             }
