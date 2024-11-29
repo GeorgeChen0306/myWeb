@@ -21,9 +21,11 @@ async function deleteUser(target, User){
     }
 }
 
-async function addNewUser(username, password, role, User){
+async function addNewUser(firstName, lastName, username, password, role, User){
     try{
         const user = await User.create({
+            firstName: firstName,
+            lastName: lastName,
             user: username,
             password: password,
             role: role,

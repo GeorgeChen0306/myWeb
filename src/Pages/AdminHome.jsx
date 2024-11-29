@@ -4,7 +4,7 @@ const AdminHome = () => {
 
     return(
         <>
-            <Nav role="admin"/>
+            <Nav/>
             <h1>Admin Home Page</h1>
         </>
     )

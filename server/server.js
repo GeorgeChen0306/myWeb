@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { deleteUser, findUser } from "./CRUD.js";
+import { deleteUser } from "./CRUD.js";
 import { createUser } from "./accountManagement.js";
 import { verifyToken, verifyRedirect } from "./token.js";
 import { verifyCredentials } from "./login.js";
@@ -20,68 +20,54 @@ const URL = process.env.URL;
 async function connect () {
     try{
         await mongoose.connect(URL);
-        console.log("Database connection successful");        
+        console.log("Database connection successful"); 
+       
+        const db = mongoose.connection.useDb("webUsers");
+ 
+        return db;
     }
     catch (error){
         console.error(error)
     }
 }
 
+
 /**
  * Database schema
  */
 const userSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
     user: String,
     password: String,
     role: String,
     loginAttempt: Number,
 });
 
-const User = mongoose.model("User", userSchema);
-
-/**
- * 
- * @returns All users in database
- */
-async function find(){
-    try{
-        const user = await findUser(User);
-        return user;
-    }
-    catch(error){
-        console.error(error);
-    }
-}
+const postSchema = new mongoose.Schema({
+    title: String,
+    author: String,
+    date: Date,
+    content: String,
+})
 
 // Add a new user to the database
 async function addUser(newUser){
     try{
         var password = null;
-        var role = "user";
+        //var role = "user";
         
         if ("password" in newUser){
             password = newUser.password
         }
 
-        if ("role" in newUser){
-            role = newUser.role;
-        }
+        // if ("role" in newUser){
+        //     role = newUser.role;
+        // }
 
         console.log(password)
-        const user = await createUser(newUser.user, password, role, User);
+        const user = await createUser(newUser.firstName, newUser.lastName, newUser.user, password, newUser.role, User);
         return user;
-    }
-    catch (error){
-        console.error(error);
-        return ({success: false});
-    }
-}
-
-// Delete the target
-async function deleteTarget(target){
-    try{
-        const result = await deleteUser(target,User);
-        return result;
     }
     catch (error){
         console.error(error);
@@ -101,13 +87,14 @@ async function login(data){
     }
 }
 
-connect(); // Start the database connection
+const db = await connect(); // Start the database connection
+const User = db.model("User", userSchema, "users");
+const Post = db.model("Post", postSchema);
 
 /*-------------------------------------------------------------------------------------------------------------- */
 app.get("/", (req, res) => {
     res.send("Hello, welcome to the server");
 })
-
 
 app.post("/api/users", async (req, res) => {
     const addUsers = await addUser(req.body);
@@ -116,14 +103,26 @@ app.post("/api/users", async (req, res) => {
 
 // Get all users in the database
 app.get("/api/users", async (req, res) => {
-    const getUsers = await find();
-    res.json(getUsers);
+    try{
+        const getUsers = await User.find().select("-_id -password "); // Exclude id and password
+        res.json(getUsers);
+    }
+    catch(error){
+        console.error("Error retrieving users ", error);
+        res.json([]);
+    }
 })
 
 // Delete a specific user by their username
 app.delete("/api/delete", async (req, res) => {
-    const deleteUser = await deleteTarget(req.body);
-    res.json(deleteUser);
+    try{
+        const result = await deleteUser(req.body);
+        res.json(result);
+    }
+    catch (error){
+        console.error(error);
+        return ({success: false})
+    }
 })
 
 app.post("/api/login", async (req, res) => {
@@ -138,7 +137,6 @@ app.post("/api/verify", async (req, res) => {
     }
 
     const verify = await verifyToken(token, process.env.SECRET_KEY);
-    console.log(verify);
     res.json(verify);
 })
 
@@ -150,6 +148,11 @@ app.post("/api/authRedirect", async (req, res) => {
     }
 
     const result = await verifyRedirect(token, process.env.SECRET_KEY);
+    res.json(result);
+})
+
+app.get("/api/posts", async (req, res) => {
+    const result = await Post.find();
     res.json(result);
 })
 

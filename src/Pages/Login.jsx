@@ -1,16 +1,21 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { useRole } from "../Role.js";
 import Nav from "../Nav"
 
 const Login = () =>{
 
     const navigate = useNavigate();
 
+    const { updateRole, updateUsername, updateFirstName, updateLastName } = useRole();
+    
     const [noAccount, setNoAccount] = useState(true);
     const [loginUserName, setLoginUserName] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
     const [newAccountUserName, setNewAccountUserName] = useState("");
     const [newAccountPassword, setNewAccountPassword] = useState("");
+    const [newAccountFirstName, setNewAccountFirstName] = useState("");
+    const [newAccountLastName, setNewAccountLastName] = useState("");
 
     const [errMsg, setErrMsg] = useState("");
 
@@ -31,9 +36,12 @@ const Login = () =>{
             }
     
             const result = await response.json();
-            
             if (result.success){
                 localStorage.setItem("LoginToken", result.token); 
+                updateRole(result.role);
+                updateUsername(username);
+                updateFirstName(result.firstName);
+                updateLastName(result.lastName);
                 if (result.role === "user") navigate("/user");
                 else if (result.role === "admin") navigate("/admin");
             }
@@ -48,7 +56,7 @@ const Login = () =>{
         }
     }
     
-    async function createNewAccount(username, password){
+    async function createNewAccount(firstName, lastName, username, password){
         try{
             const response = await fetch("/api/users", {
                 method: "POST",
@@ -56,8 +64,11 @@ const Login = () =>{
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    firstName: firstName,
+                    lastName: lastName,
                     user: username,
-                    password: password
+                    password: password,
+                    role: "user"
                 })
             })
             if (!response.ok){
@@ -68,6 +79,8 @@ const Login = () =>{
     
             if (result.success){
                 window.alert(result.message);
+                setNewAccountFirstName("");
+                setNewAccountLastName("");
                 setNewAccountUserName("");
                 setNewAccountPassword("");
             }
@@ -91,11 +104,11 @@ const Login = () =>{
 
     function signUp(e){
         e.preventDefault();
-        if (newAccountUserName === "" || newAccountPassword === "") {
-            window.alert("Please fill in the fields");
+        if (newAccountFirstName === "" || newAccountLastName === "" || newAccountUserName === "" || newAccountPassword === "") {
+            window.alert("Please fill in all fields");
             return;
         }
-        createNewAccount(newAccountUserName, newAccountPassword);
+        createNewAccount(newAccountFirstName, newAccountLastName, newAccountUserName, newAccountPassword);
     }
 
     function switchPage(e){
@@ -152,6 +165,20 @@ const Login = () =>{
             <>
                 <h1>Sign Up Here!</h1>
                 <form>
+                    <label htmlFor="firstname">First Name:</label>
+                    <input id="firstname" 
+                           type="firstname"
+                           value= {newAccountFirstName} 
+                           onChange = {(e) => setNewAccountFirstName(e.target.value)}
+                    />
+                    <br />
+                    <label htmlFor="lastname">Last Name:</label>
+                    <input id="lastname" 
+                           type="lastname"
+                           value= {newAccountLastName} 
+                           onChange = {(e) => setNewAccountLastName(e.target.value)}
+                    />
+                    <br />
                     <label htmlFor="username1">Username:</label>
                     <input id="username1" 
                            type="username"

@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import './styles/App.css';
 import HomePage from "./Pages/WebHomePage";
-import Users from "./Pages/UsersPage";
+import Users from "./Pages/AccountManagement";
 import Pokemon from "./Pages/PokemonPage";
 import UserHome from "./Pages/UserHome";
 import Login from "./Pages/Login";
 import AdminHome from "./Pages/AdminHome";
 import MyProfile from "./Pages/Profile";
+import Post from "./Pages/PostsPage";
 
 //TODO: Finish Protected Route
 //      Finish Admin Routes
@@ -65,16 +66,6 @@ function App() {
     }
   }
 
-  // Check for admin routes token
-  async function checkAdminToken(token){
-    try{
-
-    }
-    catch(error){
-
-    }
-  }
-
   // Triggers when the users land on the login page
   const ProtectedRoute = () => {
     const token = localStorage.getItem("LoginToken");
@@ -91,7 +82,6 @@ function App() {
           }
 
           const data = await checkExisitingToken(token);
-          console.log(data);
           if (data.isAuthorized){
             if (data.redirect === "user"){
               navigate("/user");
@@ -136,7 +126,6 @@ function App() {
           }
   
           const data = await checkToken(token);
-          console.log(data);
           setIsAuthorized(data.isAuthorized);
           setIsLoading(false);
         }
@@ -194,6 +183,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/pokemon" element={<Pokemon />}></Route>
+            <Route path="/posts" element={<Post />}></Route>
             <Route element={<ProtectedRoute />}>
               <Route path="/login" element={<Login />}></Route>
             </Route>
@@ -204,6 +194,7 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<AdminHome />}></Route>
               <Route path="/admin/users" element={<Users />}></Route>
+              <Route path="/admin/profile" element={<MyProfile />}></Route>
             </Route>
             <Route path="/*" element={<h1>ERROR 404: Page Not Found</h1>}></Route>
           </Routes>

@@ -1,24 +1,29 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/nav.css";
+import { useRole } from "./Role.js";
 
-const Nav = ({role = "public"}) => {
+const Nav = () => {
+
+    const { role } = useRole();
 
     const links = {
         public: [
-                    {name: "Home", path: "/"},
+                    {name: "Web Home", path: "/"},
                     {name: "Pokemon", path: "/pokemon"},
+                    {name: "Posts", path: "/posts"},
                     {name: "Login", path: "/login"}
                 ],
 
         user: [
-                {name: "Home", path: "/"},
+                {name: "Web Home", path: "/"},
+                {name: "Home", path: "/user"},
                 {name: "Pokemon", path: "/pokemon"},
                 {name: "My Profile", path: "/user/profile"}
               ],
 
         admin: [
-                {name: "Home", path: "/"},
+                {name: "Web Home", path: "/"},
+                {name: "Home", path: "/admin"},
                 {name: "Pokemon", path: "/pokemon"},
                 {name: "Users", path: "/admin/users"},
                 {name: "My Profile", path: "/admin/profile"}
@@ -36,22 +41,6 @@ const Nav = ({role = "public"}) => {
                             <Link to={tab.path}>{tab.name}</Link>
                         </li>
                     ))}
-                    {/* <li>
-                        <Link to="/" className="title">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/pokemon">Pokemon</Link>
-                    </li>
-                    <li>
-                        <Link to="/login">Login</Link>
-                    </li>
-                    {role === "user" && (
-                        <>
-                            <li>
-                                <Link to="/user/profile">My Profile</Link>
-                            </li>
-                        </>
-                    )} */}
                 </ul>
             </nav>
         </>

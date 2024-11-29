@@ -8,14 +8,15 @@ async function verifyCredentials(username, password, User, secretKey){
         if (await bcrypt.compare(password, check[0]["password"])){
             if (check[0]["loginAttempt"] > 0){
                 const result1 = await User.updateOne({user: username}, {loginAttempt: 0}) // Update the login attempt
-                console.log(result1);
             }
             // Create a JWT token
             const result = await createToken(username, check[0]["role"], secretKey);
             return ({
                         success: true,
                         token: result,
-                        role: check[0]["role"]
+                        role: check[0]["role"],
+                        firstName: check[0]["firstName"],
+                        lastName: check[0]["lastName"]
                     })
         }
         else{

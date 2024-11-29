@@ -104,7 +104,7 @@ const Users = () => {
         isLoading ? <h1>Waiting............</h1>
         :
         <>
-            <Nav role="admin"/>
+            <Nav />
             <h1>Here is the list of users:</h1>
             {
                 data.map((element, index) => {

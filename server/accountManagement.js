@@ -14,7 +14,7 @@ function randomPasswordGenerator(){
     return randomlyGeneratedPassword;
 }
 
-async function createUser(username, password, role, User){
+async function createUser(firstName, lastName, username, password, role, User){
     const userExist = await User.find({user: username});
     if (userExist.length > 0){
         return ({
@@ -32,7 +32,7 @@ async function createUser(username, password, role, User){
     var saltRounds = 10;
     var hashed = await bcrypt.hash(pass, saltRounds);
 
-    const result = await addNewUser(username, hashed, role, User);
+    const result = await addNewUser(firstName, lastName, username, hashed, role, User);
     return result;
 }
 
