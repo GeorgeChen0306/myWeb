@@ -10,10 +10,6 @@ import AdminHome from "./Pages/AdminHome";
 import MyProfile from "./Pages/Profile";
 import Post from "./Pages/PostsPage";
 
-//TODO: Finish Protected Route
-//      Finish Admin Routes
-//      Finish User Routes
-
 function App() {
 
   // Check for redirect

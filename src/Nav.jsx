@@ -18,6 +18,7 @@ const Nav = () => {
                 {name: "Web Home", path: "/"},
                 {name: "Home", path: "/user"},
                 {name: "Pokemon", path: "/pokemon"},
+                {name: "Posts", path: "/posts"},
                 {name: "My Profile", path: "/user/profile"}
               ],
 
@@ -25,6 +26,7 @@ const Nav = () => {
                 {name: "Web Home", path: "/"},
                 {name: "Home", path: "/admin"},
                 {name: "Pokemon", path: "/pokemon"},
+                {name: "Posts", path: "/posts"},
                 {name: "Users", path: "/admin/users"},
                 {name: "My Profile", path: "/admin/profile"}
                ]
