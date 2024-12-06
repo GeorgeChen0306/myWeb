@@ -45,4 +45,52 @@ async function addNewUser(firstName, lastName, username, password, role, User){
     }
 }
 
-export {findUser, deleteUser, addNewUser};
+async function addNewPost(title, username, content, Post, PostId){
+    try{
+        var id = null;
+        const result = await PostId.find({unique: "postid"});
+        if (result.length === 1){
+            id = result[0]["pid"];
+        }
+
+        const post = await Post.create({
+            pid: id,
+            title: title,
+            author: username,
+            date: new Date(),
+            content: content
+        })
+
+        const result1 = await PostId.updateOne({unique: "postid"}, {$inc : {pid : 1}});
+
+        return ({
+                    success: true,
+                    message: "New post added"
+                })
+    }
+    catch(error){
+        console.error(error);
+        return ({success: false, message: "Failed adding the post"})
+    }
+}
+
+async function updateOldPost(pid, content, Post){
+    try{
+        const result = await Post.find({pid: pid});
+        console.log(result);
+
+        if (result.length === 1) {
+            const result1 = await Post.updateOne({pid: pid}, {content: content});
+
+
+            console.log(result1);
+            return ({success: true, message: "Post updated"})
+        }
+    }
+    catch(error){
+        console.error(error);
+        return ({success: false, message: "Failed updating the post"})
+    }
+}
+
+export {findUser, deleteUser, addNewUser, addNewPost, updateOldPost};

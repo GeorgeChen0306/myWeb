@@ -6,7 +6,7 @@ async function createToken(username, role, secretKey){
         role: role
     }
 
-    return await jwt.sign(payload, secretKey, {expiresIn: "4hr"});
+    return await jwt.sign(payload, secretKey, {expiresIn: "4h"});
 }
 
 async function verifyToken(token, secretKey){

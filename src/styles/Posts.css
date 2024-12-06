@@ -1,7 +1,28 @@
 .posts-container {
-    display: "flex";
-    flex-direction: "column";
-    justify-content: "center";
-    align-items: "center";
-    height: "100vh";
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    margin-top: 10px
+}
+
+.posts-content {
+    width: 900px;
+    height: auto;
+    border: 1px solid black;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box /*Ensures padding is included in width/height */
+}
+
+.posts-content h2, .posts-container h5 {
+    margin: 1px;
+}
+
+.posts-content p {
+    margin-top: 30px;
 }

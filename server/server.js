@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { deleteUser } from "./CRUD.js";
+import { deleteUser, addNewPost, updateOldPost } from "./CRUD.js";
 import { createUser } from "./accountManagement.js";
 import { verifyToken, verifyRedirect } from "./token.js";
 import { verifyCredentials } from "./login.js";
@@ -45,10 +45,16 @@ const userSchema = new mongoose.Schema({
 });
 
 const postSchema = new mongoose.Schema({
+    pid: Number,
     title: String,
     author: String,
     date: Date,
     content: String,
+})
+
+const postIdSchema = new mongoose.Schema({
+    pid: Number,
+    unique: String
 })
 
 // Add a new user to the database
@@ -90,6 +96,7 @@ async function login(data){
 const db = await connect(); // Start the database connection
 const User = db.model("User", userSchema, "users");
 const Post = db.model("Post", postSchema);
+const PostId = db.model("Postid", postIdSchema, "postid");
 
 /*-------------------------------------------------------------------------------------------------------------- */
 app.get("/", (req, res) => {
@@ -151,9 +158,64 @@ app.post("/api/authRedirect", async (req, res) => {
     res.json(result);
 })
 
+// Get all the posts
 app.get("/api/posts", async (req, res) => {
-    const result = await Post.find();
+    try{
+        const result = await Post.find().select("-_id");
+        res.json(result);
+    }
+    catch (error){
+        console.error(error);
+        res.json([]);
+    }
+})
+
+// Add the post
+app.post("/api/createPost", async (req, res, next) => {
+    var token = "";
+
+    if (req.headers.authorization.startsWith("Bearer")){
+        token = req.headers.authorization.split(" ")[1];
+    }
+
+    const verify = await verifyToken(token, process.env.SECRET_KEY);
+    if (verify.isAuthorized){
+        req.userData = verify
+        next();
+    }
+    else {
+        res.json({success: false, message: "Unauthorized method access"})
+    }
+}, async (req, res) => {
+    const result = await addNewPost(req.body.title, req.userData.decoded.user, req.body.content, Post, PostId);
     res.json(result);
+})
+
+app.post("/api/updatePost", async (req, res, next) => {
+    var token = "";
+
+    if (req.headers.authorization.startsWith("Bearer")){
+        token = req.headers.authorization.split(" ")[1];
+    }
+
+    const verify = await verifyToken(token, process.env.SECRET_KEY);
+    if (verify.isAuthorized){
+        req.userData = verify
+        next();
+    }
+    else {
+        res.json({success: false, message: "Unauthorized method access"})
+    }
+}, async (req, res) => {
+    try{
+        console.log(req.body);
+        const result = await updateOldPost(req.body.postId, req.body.content, Post);
+        res.json(result);    
+    }
+    catch(error){
+        console.error(error);
+        res.json({success: false, message: "Unable to process the update"});
+    }
 })
 
 app.listen("3001", (req, res) =>{

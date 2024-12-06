@@ -1,9 +1,6 @@
-import { useRole } from "../Role.js";
 import Nav from "../Nav.jsx";
 
 const UserHome = () => {
-
-    const { role } = useRole();
 
     return (
         <>
