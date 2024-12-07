@@ -1,14 +1,19 @@
-import Nav from "../Nav.jsx"
+import Nav from "../components/Nav.jsx"
+import { useRole } from "../context/Role.js"
 
 const HomePage = () => {
+
+    const { role, username, updateRole, updateUsername, logout } = useRole();
+
     return (
         <>
             <Nav />
             <h1>George's Website Home Page</h1>
-            <p>Hello! Welcome to my web page. There are currently two pages you can visit, namely, the pokemon and user pages</p>
-            <p>In the pokemon page, you will be able to select a pokemon from the drop-down list and it will give you their weight</p>
-            <p>In the user page, you will be able to see all the user(s) that are in the database and also add a user to the database</p>
-            <img src="/matrix.jpg" alt="matrix"></img>
+            <h1>Role: {role}</h1>
+            <h1>Username: {username}</h1>
+            <button onClick={() => updateRole("admin")}>Set Role to Admin</button>
+            <button onClick={() => updateUsername("george")}>Set Username to George</button>
+            <button onClick={logout}>Logout</button>
         </>
     )
 }

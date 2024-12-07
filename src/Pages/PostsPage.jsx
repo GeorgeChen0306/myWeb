@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useRole } from "../Role.js";
-import Nav from "../Nav.jsx";
+import { useRole } from "../context/Role.js";
+import Nav from "../components/Nav.jsx";
 import "../styles/Posts.css";
 import CreatePost from "../Modals/CreatePost.jsx";
 import UpdatePost from "../Modals/EditPost.jsx";

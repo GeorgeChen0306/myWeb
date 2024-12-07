@@ -1,4 +1,4 @@
-import Nav from "../Nav.jsx"
+import Nav from "../components/Nav.jsx"
 
 const AdminHome = () => {
 

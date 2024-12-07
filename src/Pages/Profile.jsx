@@ -1,6 +1,6 @@
-import { useRole } from "../Role.js"
+import { useRole } from "../context/Role.js"
 import { useNavigate } from "react-router-dom";
-import Nav from "../Nav.jsx";
+import Nav from "../components/Nav.jsx";
 
 const MyProfile = () => {
 

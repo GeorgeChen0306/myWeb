@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import "./styles/nav.css";
-import { useRole } from "./Role.js";
+import "../styles/nav.css";
+import { useRole } from "../context/Role.js";
 
 const Nav = () => {
 

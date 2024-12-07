@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { useRole } from "../Role.js";
-import Nav from "../Nav"
+import { useRole } from "../context/Role.js";
+import Nav from "../components/Nav.jsx"
 
 const Login = () =>{
 
