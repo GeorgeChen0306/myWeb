@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { deleteUser, addNewPost, updateOldPost } from "./CRUD.js";
+import { deleteUser, addNewPost, updateOldPost, deletePost } from "./CRUD.js";
 import { createUser } from "./accountManagement.js";
 import { verifyToken, verifyRedirect } from "./token.js";
 import { verifyCredentials } from "./login.js";
@@ -23,7 +23,6 @@ async function connect () {
         console.log("Database connection successful"); 
        
         const db = mongoose.connection.useDb("webUsers");
- 
         return db;
     }
     catch (error){
@@ -50,6 +49,7 @@ const postSchema = new mongoose.Schema({
     author: String,
     date: Date,
     content: String,
+    updated : Boolean
 })
 
 const postIdSchema = new mongoose.Schema({
@@ -61,15 +61,10 @@ const postIdSchema = new mongoose.Schema({
 async function addUser(newUser){
     try{
         var password = null;
-        //var role = "user";
         
         if ("password" in newUser){
             password = newUser.password
         }
-
-        // if ("role" in newUser){
-        //     role = newUser.role;
-        // }
 
         console.log(password)
         const user = await createUser(newUser.firstName, newUser.lastName, newUser.user, password, newUser.role, User);
@@ -98,11 +93,12 @@ const User = db.model("User", userSchema, "users");
 const Post = db.model("Post", postSchema);
 const PostId = db.model("Postid", postIdSchema, "postid");
 
-/*-------------------------------------------------------------------------------------------------------------- */
+/*------------------------------------------------APIs----------------------------------------------------- */
 app.get("/", (req, res) => {
     res.send("Hello, welcome to the server");
 })
 
+// Add a new user to the database(DB)
 app.post("/api/users", async (req, res) => {
     const addUsers = await addUser(req.body);
     res.json(addUsers);
@@ -132,11 +128,13 @@ app.delete("/api/delete", async (req, res) => {
     }
 })
 
+// Check user credenitals and provide a token if it's valid
 app.post("/api/login", async (req, res) => {
     const data = await login(req.body);
     res.json(data);
 })
 
+// 
 app.post("/api/verify", async (req, res) => {
     var token = "";
     if (req.headers.authorization.startsWith("Bearer")){
@@ -147,6 +145,7 @@ app.post("/api/verify", async (req, res) => {
     res.json(verify);
 })
 
+// Verify user tokens and redirect them to their role route
 app.post("/api/authRedirect", async (req, res) => {
     var token = "";
     
@@ -161,7 +160,7 @@ app.post("/api/authRedirect", async (req, res) => {
 // Get all the posts
 app.get("/api/posts", async (req, res) => {
     try{
-        const result = await Post.find().select("-_id");
+        const result = await Post.find().select("-_id"); // Do not include the _id field
         res.json(result);
     }
     catch (error){
@@ -191,6 +190,7 @@ app.post("/api/createPost", async (req, res, next) => {
     res.json(result);
 })
 
+// Update the post
 app.post("/api/updatePost", async (req, res, next) => {
     var token = "";
 
@@ -208,13 +208,48 @@ app.post("/api/updatePost", async (req, res, next) => {
     }
 }, async (req, res) => {
     try{
-        console.log(req.body);
-        const result = await updateOldPost(req.body.postId, req.body.content, Post);
-        res.json(result);    
+        if (req.userData.decoded.user === req.body.user){
+            const result = await updateOldPost(req.body.postId, req.body.title, req.body.content, Post);
+            res.json(result);        
+        }
+        else {
+            res.json({success: false, message: "Unauthorized permission to update post"})
+        }
     }
     catch(error){
         console.error(error);
         res.json({success: false, message: "Unable to process the update"});
+    }
+})
+
+app.delete("/api/deletePost", async (req, res, next) => {
+    var token = "";
+
+    if (req.headers.authorization.startsWith("Bearer")){
+        token = req.headers.authorization.split(" ")[1];
+    }
+
+    const verify = await verifyToken(token, process.env.SECRET_KEY);
+    if (verify.isAuthorized){
+        req.userData = verify
+        next();
+    }
+    else {
+        res.json({success: false, message: "Unauthorized method access"})
+    }
+}, async (req, res) =>{
+    try{
+        if (req.userData.decoded.user === req.body.user){
+            const result = await deletePost(req.body.postId, Post);
+            res.json(result);
+        }
+        else {
+            res.json({success: false, message: "Unauthorized permission to delete post"})
+        }
+    }
+    catch(error){
+        console.error("Error deleting post ", error);
+        res.json({success: false, message: "Failed deleting post"})
     }
 })
 

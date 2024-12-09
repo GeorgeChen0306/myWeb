@@ -12,7 +12,7 @@
 }
 
 .modalContainer {
-    width: 400px;
+    width: 800px;
     height: 300px;
     border-radius: 12px;
     background-color: white;
@@ -35,8 +35,16 @@
 }
 
 .modalContainer .footer {
-    flex: 20%;
-    display: flex;
+    /* flex: 20%;
+    display: flex; */
     justify-content: center;
     align-items: center;
+}
+
+.modalContainer button {
+    
+}
+
+#cancelbtn {
+    background-color: red;
 }

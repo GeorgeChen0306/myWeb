@@ -4,25 +4,63 @@ import Nav from "../components/Nav.jsx";
 import "../styles/Posts.css";
 import CreatePost from "../Modals/CreatePost.jsx";
 import UpdatePost from "../Modals/EditPost.jsx";
+import Confirmation from "../Modals/Confirmation.jsx";
 
 const Post = () => {
-
+    
     const { role, username } = useRole();
 
-    const [posts, setPosts] = useState(null);
-    const [isFetching, setIsFetching] = useState(true);
-    const [showAll, setShowAll] = useState(true);
+    const [posts, setPosts] = useState(null); // posts data
+    const [isFetching, setIsFetching] = useState(true); // fetching posts
+    const [showAll, setShowAll] = useState(true); // show all posts
 
     const [openNewPostModal, setOpenNewPostModal] = useState(false);
     const [editPost, setEditPost] = useState(false);
 
+    // State to manage create a new post
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
 
+    // State to manage post update
     const [oldContent, setOldContent] = useState("");
+    const [oldTitle, setOldTitle] = useState("");
+    const [updatedTitle, setUpdatedTitle] = useState("");
     const [updatedContent, setUpdatedContent] = useState("");
     const [postId, setPostId] = useState(0);
+
+    // Post view status 
+    const [myPostsBtnDisabled, setMyPostsBtnDisabled] = useState(false);
+    const [allPostsBtnDisabled, setAllPostsBtnDisabled] = useState(true);
+
+    // State to manage delete post
+    const [openConfirmDelete, setOpenConfirmDeleteModal] = useState(false);
+    const [deletePostId, setDeletePostId] = useState(null);
+
+    // Check how many posts the user have
+    let userPostsCount = 0;
+    if (!showAll){
+        userPostsCount = posts.filter(post => post.author === username).length;
+    }
     
+/*START------------------------------- API REQUESTS TO THE SERVER--------------------------------- */    
+    
+    // API call to get all posts
+    async function getPosts(){
+        const response = await fetch("/api/posts", {
+            method: "GET",
+            headers: {
+                    "Content-Type": "application/json"
+            }
+        })
+        if (!response.ok){
+            console.log("Error retrieving posts")
+        }
+
+        const postsData = await response.json();
+        return postsData;
+    }
+
+    // API call to add a new post
     async function addPost(){
         const response = await fetch("/api/createPost", 
             {
@@ -45,21 +83,7 @@ const Post = () => {
         return result;
     }
 
-    async function getPosts(){
-        const response = await fetch("/api/posts", {
-            method: "GET",
-            headers: {
-                    "Content-Type": "application/json"
-            }
-        })
-        if (!response.ok){
-            console.log("Error retrieving posts")
-        }
-
-        const postsData = await response.json();
-        return postsData;
-    }
-    
+    // API call to update a post
     async function updatePost(){
         const response = await fetch("/api/updatePost", 
             {
@@ -70,7 +94,9 @@ const Post = () => {
                 },
                 body: JSON.stringify({
                     postId: postId,
-                    content: updatedContent
+                    title: updatedTitle,
+                    content: updatedContent,
+                    user: username
                 })
             }
         )
@@ -82,6 +108,55 @@ const Post = () => {
         return result;
     }
 
+    // API call to delete a post
+    async function deletePost(pid){
+        const response = await fetch("/api/deletePost", 
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("LoginToken")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    postId: pid,
+                    user: username
+                })
+            }
+        )
+        if (!response.ok){
+            console.error("Error adding the post");
+        }
+
+        const result = await response.json();
+        return result;
+    }
+
+    async function checkToken(token){
+        try{
+            const response = await fetch("/api/verify", {
+                method: "POST",
+                headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                }
+            })
+
+            if (!response.ok){
+                console.error("Error verifying token");
+                return ({isAuthorized: false})
+            }
+
+            const data = await response.json();
+            return data;
+        }
+        catch (error){
+            console.error(error)
+            return ({isAuthorized: false})
+        }
+    }
+/*END --------------------------------- API REQUESTS TO THE SERVER--------------------------------------------- */
+
+/*START---------------------------------------USE EFFECT------------------------------------------ */
     // This state runs every time a new post is submitted
     useEffect(() => {
         if (postTitle.trim() !== "" && postContent.trim() !== ""){
@@ -90,87 +165,177 @@ const Post = () => {
                 setPostTitle("");
                 setPostContent("");
                 window.alert(result.message);
+                window.location.reload();
             };
             submitPost();
         }
     },[postTitle, postContent])
 
-
     // This state runs every 
     useEffect(() => {
         if (updatedContent.trim() !== ""){
             const changePost = async () => {
-                console.log(postId);
-                const result = await updatePost(postId, updatedContent);
+                const result = await updatePost(postId, updatedTitle, updatedContent);
                 setPostId(null);
                 setUpdatedContent("");
                 window.alert(result.message);
-                //window.location.reload();
+                window.location.reload();
             };
             changePost();
         }
-    },[updatedContent])
+    },[updatedTitle, updatedContent])
 
-    // Convert time to mm/dd/yyyy
-    function convertToDate(time){
-        const date = new Date(time);
-        return `${date.getMonth()+ 1}/${date.getDate()}/${date.getFullYear()}`;
+    
+    // Runs when the page load
+    useEffect(() => {
+        const content = async () =>{
+            const data = await getPosts();
+            setPosts(data);
+            setIsFetching(false);
+            
+            // Extract url query 
+            const url = new URL(window.location);
+            const params = new URLSearchParams(window.location.search);
+            
+            // Check for view key in url query
+            if (params.has("view")){
+                var value = params.get("view");
+                if (value.toLowerCase() === "myposts"){
+                    viewMyPosts()
+                }
+                else if (value.toLowerCase() === "allposts"){
+                    viewAllPosts();
+                }
+                else {
+                    url.searchParams.set("view", "allposts")
+                    window.history.pushState({}, "", url);
+                    viewAllPosts();
+                }
+            }
+            else {
+                // Push the view key to the url query
+                url.searchParams.set("view", "allposts")
+                window.history.pushState({}, "", url);
+            }
+        }
+        content()
+    },[])
+/*END-------------------------------------------------USE EFFECT------------------------------------------ */
+    
+    // Delete the post
+    async function removePost(event){
+        setOpenConfirmDeleteModal(false);
+        const result = await deletePost(deletePostId);
+        window.alert(result.message);
+        if (result.success) window.location.reload();
     }
 
-    // CHANGE THE NAME!!!
+    // Convert time to mm/dd/yyyy
+    function convertToDate(time, updated){
+        const date = new Date(time);
+        const HMS = date.toLocaleTimeString();
+        if (!updated) return `Posted on: ${date.getMonth()+ 1}/${date.getDate()}/${date.getFullYear()} at ${HMS}`;
+        else return `Updated on: ${date.getMonth()+ 1}/${date.getDate()}/${date.getFullYear()} at ${HMS}`
+    }
+
     // Close the create new post modal
-    function closeModal(){
+    function closeCreateNewPost(){
         setOpenNewPostModal(false);
     }
 
-    // Close the edit post modal
-    function closeEdit(newContent){
-        setUpdatedContent(newContent);
-        console.log(updatedContent);
-        setEditPost(false);
+    function closeDeletePostModal(){
+        setOpenConfirmDeleteModal(false);
     }
 
-    async function setPostInfo(title, content){
+    function confirmDeletePost(event){
+        const pid = event.target.getAttribute("data-pid");
+        setDeletePostId(pid);
+        setOpenConfirmDeleteModal(true);
+    }
+
+    // Close the edit post modal
+    function closeEdit(newTitle, newContent, cancel=false){
+        setEditPost(false);
+        if (cancel) return;
+        setUpdatedTitle(newTitle);
+        setUpdatedContent(newContent);
+    }
+
+    // Set the new post title and content
+    async function setNewPostInfo(title, content, cancel=false){
+        if (cancel) return;
         setPostTitle(title);
         setPostContent(content);
     }
 
-    function myPosts(){
-        if (role === "public") {
+    // View posts made by the user
+    async function viewMyPosts(){
+        const token = localStorage.getItem("LoginToken");
+        if (!token || (role === "public")) {
             window.alert("Login to see your posts");
+            paramQuery("allposts");
             return;
         }
+        const result = await checkToken(token);
+
+        if (!result.isAuthorized){
+            window.alert("Login to see your posts");
+            localStorage.removeItem("LoginToken")
+            paramQuery("allposts");
+            return;
+        }
+
+        paramQuery("myposts")
+        setMyPostsBtnDisabled(true);
+        setAllPostsBtnDisabled(false);
         setShowAll(false);
     }
 
-    function createPost(){
+    // View all posts
+    function viewAllPosts(){
+        paramQuery("allposts");
+        setAllPostsBtnDisabled(true);
+        setMyPostsBtnDisabled(false);
+        setShowAll(true);
+    }
+
+    async function createPost(){
         if (role === "public"){
             window.alert("Login to create a post");
+            return;
+        }
+
+        const token = localStorage.getItem("LoginToken");
+        if (!token || (role === "public")) {
+            window.alert("Login to create a post");
+            return;
+        }
+        const result = await checkToken(token);
+
+        if (!result.isAuthorized){
+            window.alert("Login to create a post");
+            localStorage.removeItem("LoginToken");
             return;
         }
         setOpenNewPostModal(true);
     }
 
     function updatingPost(event){
-        const result = posts.find(post => post.pid === Number(event.target.id));
+        const result = posts.find(post => post.pid === Number(event.target.getAttribute("data-pid")));
+        setOldTitle(result.title);
         setOldContent(result.content);
-        console.log(result);
-        console.log(result.pid);
-        console.log("Before ", postId)
         setPostId(result.pid);
-        console.log("After ", postId)
         setEditPost(true);
     }
 
-    useEffect(() => {
-        const content = async () =>{
-            const data = await getPosts();
-            setPosts(data);
-            setIsFetching(false);
-        }
-        content()
-    },[])
+    // URL query parameters
+    function paramQuery(view){
+        const url = new URL(window.location);
+        url.searchParams.set("view", view);
+        window.history.pushState({}, "",  url);
+    }
 
+    // Fetching posts data
     if (isFetching){
         return (<h1>Fetching posts...</h1>)
     }
@@ -178,43 +343,58 @@ const Post = () => {
     return(
         <>
             <Nav />
+            <div className="background">
             <h1>Posts</h1>
-            <button onClick={myPosts}>View my posts</button>
-            <button onClick={createPost}>Create a post</button>
-            <br />
-            <button onClick={() => setShowAll(true)}>View all posts</button>
-            
+            <div className="posts-header">
+                <button id="myPosts" 
+                        onClick={viewMyPosts} 
+                        disabled={myPostsBtnDisabled}>View my posts</button>
+                <button id="allPosts" 
+                        disabled={allPostsBtnDisabled}
+                        onClick={viewAllPosts}>View all posts</button>
+                <button onClick={createPost}>Create a post</button>
+            </div>
             {showAll && posts.map((posts, index) => {
                 return(
                     <div key={index} className="posts-container">
                        <div className="posts-content"> 
                             <h2>{posts.title}</h2>
                             <h5>By: {posts.author}</h5>
-                            <h5>{convertToDate(posts.date)}</h5>
+                            <h5>{convertToDate(posts.date, posts.updated)}</h5>
                             <p>{posts.content}</p>
                         </div>
                     </div>
                 )
             })}
-            
-            {!showAll && posts.map((posts, index) => {
+
+            {showAll && (posts.length === 0) && (<h3>Seems like there are no posts</h3>)}
+
+            {
+            !showAll && posts.map((posts, index) => {
                 if (posts.author === username){
                     return(
                         <div key={index} className="posts-container">
                             <div className="posts-content"> 
                                 <h2>{posts.title}</h2>
                                 <h5>By: {posts.author}</h5>
-                                <h5>{convertToDate(posts.date)}</h5>
+                                <h5>{convertToDate(posts.date, posts.updated)}</h5>
                                 <p>{posts.content}</p>
-                                <button id={posts.pid} onClick={updatingPost}>Edit</button>
+                                <button data-pid={posts.pid} onClick={updatingPost}>Edit</button>
+                                <button data-pid={posts.pid} onClick={confirmDeletePost}>Delete</button>
                             </div>
                          </div>
                     )
                 }
                 else return null;
             })}
-            {openNewPostModal && <CreatePost closeModal={closeModal} title="Create a post" setPostInfo={setPostInfo} />}
-            {editPost && <UpdatePost closeEdit={closeEdit} title="Edit Post" oldContent={oldContent}/>}
+            </div>
+
+            {!showAll && (userPostsCount === 0) && (<h3>Seems like you have no post.</h3>)}
+
+            {openNewPostModal && <CreatePost closeCreateNewPost={closeCreateNewPost} title="Create a post" setNewPostInfo={setNewPostInfo} />}
+            {editPost && <UpdatePost closeEdit={closeEdit} title="Edit Post" oldTitle={oldTitle} oldContent={oldContent}/>}
+            {openConfirmDelete && <Confirmation closeModal={closeDeletePostModal} handleConfirm={removePost} title="Delete this post?" message="Are you sure you want to delete this post? This cannot be undone"/>}
+            
         </>
     )
 }

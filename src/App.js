@@ -130,12 +130,18 @@ function App() {
         }
       }
       verify();
-  },[])
+    },[])
+
+    useEffect(() =>{
+      if (!isLoading && !isAuthorized){
+        navigate("/login");
+      }
+    },[isLoading, isAuthorized, navigate])
 
     if (isLoading){
       return <h1>Waiting....</h1>
     }
-    return (isAuthorized ? <Outlet /> : navigate("/login"))
+    return (isAuthorized ? <Outlet /> : null)
 
   }
 
@@ -164,12 +170,19 @@ function App() {
         }
       }
       verify();
-  },[])
+    },[])
+
+    useEffect(() =>{
+      if (!isLoading && !isAuthorized){
+        navigate("/login");
+      }
+    },[isLoading, isAuthorized, navigate])
+
 
     if (isLoading){
       return <h1>Waiting....</h1>
     }
-    return (isAuthorized ? <Outlet /> : navigate("/login"))
+    return (isAuthorized ? <Outlet /> : null)
   }
 
   return (

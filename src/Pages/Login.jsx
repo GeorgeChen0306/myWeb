@@ -108,6 +108,13 @@ const Login = () =>{
             window.alert("Please fill in all fields");
             return;
         }
+
+        const checkForCapital = /[A-Z]/;
+        const checkForSpecialChar = /[!@#$%_]/
+        const checkForNum = /[0-9]/
+
+        //if (checkForCapital.test(newAccountPassword)) 
+
         createNewAccount(newAccountFirstName, newAccountLastName, newAccountUserName, newAccountPassword);
     }
 
@@ -140,17 +147,17 @@ const Login = () =>{
                        style = {{width: "360px"}}
                 />
                 <form>
-                    <label htmlFor="username">Username:</label>
                     <input id="username" 
                            type="username"
                            value= {loginUserName}
+                           placeholder="Username"
                            onChange= {(e) => setLoginUserName(e.target.value)}
                      />
                     <br />
-                    <label htmlFor="password">Password:</label>
                     <input id="password" 
                            type="password"
-                           value= {loginPassword} 
+                           value= {loginPassword}
+                           placeholder="Password" 
                            onChange= {(e) => setLoginPassword(e.target.value)}
                     />
                     <br />
@@ -165,31 +172,31 @@ const Login = () =>{
             <>
                 <h1>Sign Up Here!</h1>
                 <form>
-                    <label htmlFor="firstname">First Name:</label>
                     <input id="firstname" 
                            type="firstname"
                            value= {newAccountFirstName} 
+                           placeholder="First Name"
                            onChange = {(e) => setNewAccountFirstName(e.target.value)}
                     />
                     <br />
-                    <label htmlFor="lastname">Last Name:</label>
                     <input id="lastname" 
                            type="lastname"
                            value= {newAccountLastName} 
+                           placeholder="Last Name"
                            onChange = {(e) => setNewAccountLastName(e.target.value)}
                     />
                     <br />
-                    <label htmlFor="username1">Username:</label>
                     <input id="username1" 
                            type="username"
                            value= {newAccountUserName} 
+                           placeholder="Username"
                            onChange = {(e) => setNewAccountUserName(e.target.value)}
                     />
                     <br />
-                    <label htmlFor="password1">Password:</label>
                     <input id="password1" 
                            type="password"
                            value= {newAccountPassword} 
+                           placeholder="Password"
                            onChange= {(e) => setNewAccountPassword(e.target.value)}       
                     />
                     <br />

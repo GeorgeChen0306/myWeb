@@ -58,7 +58,8 @@ async function addNewPost(title, username, content, Post, PostId){
             title: title,
             author: username,
             date: new Date(),
-            content: content
+            content: content,
+            updated: false
         })
 
         const result1 = await PostId.updateOne({unique: "postid"}, {$inc : {pid : 1}});
@@ -74,16 +75,12 @@ async function addNewPost(title, username, content, Post, PostId){
     }
 }
 
-async function updateOldPost(pid, content, Post){
+async function updateOldPost(pid, title, content, Post){
     try{
         const result = await Post.find({pid: pid});
-        console.log(result);
 
         if (result.length === 1) {
-            const result1 = await Post.updateOne({pid: pid}, {content: content});
-
-
-            console.log(result1);
+            const result1 = await Post.updateOne({pid: pid}, {title: title, content: content, updated: true});
             return ({success: true, message: "Post updated"})
         }
     }
@@ -93,4 +90,15 @@ async function updateOldPost(pid, content, Post){
     }
 }
 
-export {findUser, deleteUser, addNewUser, addNewPost, updateOldPost};
+async function deletePost(pid, Post){
+    try{
+        const result = await Post.deleteOne({pid: pid});
+        return ({success: true, message: "Post deleted"});
+    }
+    catch (error){
+        console.error("Error deleting post ", error);
+        return({success: false, message: "Error deleting post"})
+    }
+}
+
+export {findUser, deleteUser, addNewUser, addNewPost, updateOldPost, deletePost};
