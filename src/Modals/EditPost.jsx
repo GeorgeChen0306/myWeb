@@ -37,7 +37,7 @@ const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
                           onChange={(e) => setNewTitle(e.target.value)}
                     />
                     <label htmlFor="content">New Content: </label>
-                    <input 
+                    <textarea 
                           id="content"
                           value={newContent}
                           onChange={(e) => setNewContent(e.target.value)}

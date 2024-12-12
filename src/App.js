@@ -9,8 +9,11 @@ import Login from "./Pages/Login";
 import AdminHome from "./Pages/AdminHome";
 import MyProfile from "./Pages/Profile";
 import Post from "./Pages/PostsPage";
+import { useRole } from "./context/Role";
 
 function App() {
+
+  const { logout } = useRole();
 
   // Check for redirect
   async function checkExisitingToken(token){
@@ -87,7 +90,8 @@ function App() {
             }
           }
           else {
-            localStorage.removeItem("LoginToken");
+            logout();
+            //localStorage.removeItem("LoginToken");
             setIsLoading(false);
           }
         }

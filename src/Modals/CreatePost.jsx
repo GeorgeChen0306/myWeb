@@ -61,7 +61,6 @@ const CreatePost = ({closeCreateNewPost, title, setNewPostInfo}) => {
                     <div className="title">
                         <h2>{title}</h2>
                     </div>
-                    <div className="postForm">
                         <input 
                             id="title"
                             type="text"
@@ -70,12 +69,13 @@ const CreatePost = ({closeCreateNewPost, title, setNewPostInfo}) => {
                             onChange={checkPostTitleLength}
                         />
                         <input id="title_length"
-                            value={`${postTitleLength}/${MAX_TITLE_LENGTH}`}
-                            style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
-                            readOnly
+                               type="text"
+                               value={`${postTitleLength}/${MAX_TITLE_LENGTH}`}
+                               style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
+                               readOnly
                         />
                         <br />
-                        <input
+                        <textarea
                             id="content"
                             type="text"
                             placeholder="Content"
@@ -83,11 +83,11 @@ const CreatePost = ({closeCreateNewPost, title, setNewPostInfo}) => {
                             onChange={checkPostTextLength}
                         />
                         <input id="text_length"
-                            value={`${postTextLength}/${MAX_TEXT_LENGTH}`}
-                            style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
-                            readOnly
-                        />
-                    </div>
+                               type="text"
+                               value={`${postTextLength}/${MAX_TEXT_LENGTH}`}
+                               style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
+                               readOnly
+                        />                    
                     <div className="footer">
                         <button onClick={handleCreatePost} style={{marginTop:"50px"}}>Create the post!</button>
                         <button onClick={cancel}>Cancel</button>

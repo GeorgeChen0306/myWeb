@@ -8,7 +8,7 @@ import Confirmation from "../Modals/Confirmation.jsx";
 
 const Post = () => {
     
-    const { role, username } = useRole();
+    const { role, username, logout } = useRole();
 
     const [posts, setPosts] = useState(null); // posts data
     const [isFetching, setIsFetching] = useState(true); // fetching posts
@@ -280,7 +280,7 @@ const Post = () => {
 
         if (!result.isAuthorized){
             window.alert("Login to see your posts");
-            localStorage.removeItem("LoginToken")
+            logout();
             paramQuery("allposts");
             return;
         }
@@ -314,7 +314,7 @@ const Post = () => {
 
         if (!result.isAuthorized){
             window.alert("Login to create a post");
-            localStorage.removeItem("LoginToken");
+            logout();
             return;
         }
         setOpenNewPostModal(true);
@@ -379,8 +379,10 @@ const Post = () => {
                                 <h5>By: {posts.author}</h5>
                                 <h5>{convertToDate(posts.date, posts.updated)}</h5>
                                 <p>{posts.content}</p>
-                                <button data-pid={posts.pid} onClick={updatingPost}>Edit</button>
-                                <button data-pid={posts.pid} onClick={confirmDeletePost}>Delete</button>
+                                <div className="choice-btn">
+                                    <button data-pid={posts.pid} onClick={updatingPost}>Edit</button>
+                                    <button data-pid={posts.pid} onClick={confirmDeletePost}>Delete</button>
+                                </div>
                             </div>
                          </div>
                     )
