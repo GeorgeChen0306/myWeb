@@ -18,7 +18,7 @@ const Confirmation = ({closeModal, handleConfirm, title, message}) => {
                     </div>
                     <div className="footer">
                         <button onClick={confirm}>OK</button>
-                        <button onClick={() => {closeModal(false)} } id="cancelbtn">Cancel</button>
+                        <button onClick={() => {closeModal(false)} } className="cancel-btn">Cancel</button>
                     </div>
                 </div>
             </div>

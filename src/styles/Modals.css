@@ -22,6 +22,21 @@
     padding: 25px;
 }
 
+.modalContainer .t-length {
+    border: none;
+    outline: none;
+    pointer-events: none;
+    user-select: none;
+    margin-bottom: 10px;
+}
+
+.modalContainer .c-length {
+    border: none;
+    outline: none;
+    pointer-events: none;
+    user-select: none;
+}
+
 .modalContainer .title {
     display: inline-block;
     text-align: center;
@@ -34,28 +49,47 @@
     margin-top: 10px;
 }
 
-.modalContainer .footer {
-    justify-content: center;
-    align-items: center;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 5px;
-    border: solid black;
-    border-radius: 3px;
-}
-
-#content {
+textarea {
     width: 100%; /* Makes it stretch to the width of the modal container */
-    height: 10000px; /* Increases the height of the content box */
+    height: 100px; /* Increases the height of the content box */
     padding: 10px; /* Adds some space inside the textarea */
-    border: solid black;
+    /* border: solid black; */
     border-radius: 3px;
     resize: none; /* Optional: Prevents the user from resizing the textarea */
     box-sizing: border-box; /* Ensures padding is included in the width/height */
 }
 
-#cancelbtn {
+.modalContainer .footer {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.modalContainer .footer button {
+    background-color: lightblue;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.modalContainer .footer .cancel-btn {
     background-color: red;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.modalContainer .footer button:hover{
+    opacity: .7;
+}
+
+/* input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: solid black;
+    border-radius: 3px;
+} */
+
+label {
+    font-weight: bold;
 }

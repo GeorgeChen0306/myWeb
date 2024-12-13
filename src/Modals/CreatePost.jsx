@@ -4,7 +4,7 @@ import "../styles/Modals.css"
 
 const CreatePost = ({closeCreateNewPost, title, setNewPostInfo}) => {
     const MAX_TITLE_LENGTH = 50;
-    const MAX_TEXT_LENGTH = 300;
+    const MAX_TEXT_LENGTH = 500;
     
     const [postText, setPostText] = useState("");
     const [postTitle, setPostTitle] = useState("");
@@ -61,36 +61,31 @@ const CreatePost = ({closeCreateNewPost, title, setNewPostInfo}) => {
                     <div className="title">
                         <h2>{title}</h2>
                     </div>
-                        <input 
-                            id="title"
-                            type="text"
-                            placeholder="Title"
-                            value={postTitle}
-                            onChange={checkPostTitleLength}
-                        />
-                        <input id="title_length"
-                               type="text"
-                               value={`${postTitleLength}/${MAX_TITLE_LENGTH}`}
-                               style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
-                               readOnly
-                        />
-                        <br />
-                        <textarea
-                            id="content"
-                            type="text"
-                            placeholder="Content"
-                            value={postText}
-                            onChange={checkPostTextLength}
-                        />
-                        <input id="text_length"
-                               type="text"
-                               value={`${postTextLength}/${MAX_TEXT_LENGTH}`}
-                               style={{border: "none", outline: "none", pointerEvents: "none", userSelect: "none"}}
-                               readOnly
-                        />                    
+                    <input type="text"
+                           placeholder="Title"
+                           value={postTitle}
+                           onChange={checkPostTitleLength}
+                    />
+                    
+                    <input className="t-length"
+                           type="text"
+                           value={`${postTitleLength}/${MAX_TITLE_LENGTH}`}
+                           readOnly
+                    />
+                    
+                    <textarea type="text"
+                              placeholder="Content"
+                              value={postText}
+                              onChange={checkPostTextLength}
+                    />
+                    <input className="c-length"
+                           type="text"
+                           value={`${postTextLength}/${MAX_TEXT_LENGTH}`}
+                           readOnly
+                    />                    
                     <div className="footer">
-                        <button onClick={handleCreatePost} style={{marginTop:"50px"}}>Create the post!</button>
-                        <button onClick={cancel}>Cancel</button>
+                        <button onClick={handleCreatePost}>Create the post!</button>
+                        <button className="cancel-btn" onClick={cancel}>Cancel</button>
                     </div>
                 </div>
             </div>

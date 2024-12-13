@@ -25,6 +25,7 @@
 
 .posts-content button {
     background-color: skyblue;
+    padding: 10px;
 }
 
 .choice-btn {
@@ -32,7 +33,6 @@
     justify-content: flex-end;
     gap: 20px;
 }
-
 
 .posts-content h2, .posts-container h5 {
     margin: 1px;
@@ -46,7 +46,8 @@
     width: 200px;
     margin-right: 10px;
     background-color: lightblue;
-    border: solid black
+    border: solid black;
+    padding: 10px;
 }
 
 button:hover {
