@@ -53,7 +53,6 @@ textarea {
     width: 100%; /* Makes it stretch to the width of the modal container */
     height: 100px; /* Increases the height of the content box */
     padding: 10px; /* Adds some space inside the textarea */
-    /* border: solid black; */
     border-radius: 3px;
     resize: none; /* Optional: Prevents the user from resizing the textarea */
     box-sizing: border-box; /* Ensures padding is included in the width/height */

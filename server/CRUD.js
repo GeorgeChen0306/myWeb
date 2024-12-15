@@ -80,7 +80,8 @@ async function updateOldPost(pid, title, content, Post){
         const result = await Post.find({pid: pid});
 
         if (result.length === 1) {
-            const result1 = await Post.updateOne({pid: pid}, {title: title, content: content, updated: true});
+            const updatedDate = new Date();
+            const result1 = await Post.updateOne({pid: pid}, {title: title, content: content, date: updatedDate, updated: true});
             return ({success: true, message: "Post updated"})
         }
     }

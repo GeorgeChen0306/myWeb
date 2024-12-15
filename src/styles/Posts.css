@@ -28,6 +28,10 @@
     padding: 10px;
 }
 
+.posts-content .delete-btn {
+    background-color: red;
+}
+
 .choice-btn {
     display: flex;
     justify-content: flex-end;

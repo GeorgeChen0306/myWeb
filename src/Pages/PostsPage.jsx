@@ -5,6 +5,7 @@ import "../styles/Posts.css";
 import CreatePost from "../Modals/CreatePost.jsx";
 import UpdatePost from "../Modals/EditPost.jsx";
 import Confirmation from "../Modals/Confirmation.jsx";
+import Notification from "../Modals/Notification.jsx";
 
 const Post = () => {
     
@@ -35,6 +36,10 @@ const Post = () => {
     // State to manage delete post
     const [openConfirmDelete, setOpenConfirmDeleteModal] = useState(false);
     const [deletePostId, setDeletePostId] = useState(null);
+
+    const [openNotificationModal, setOpenNotificationModal] = useState(false);
+    const [notificationTitle, setNotificationTitle] = useState("");
+    const [notificationMsg, setNotificationMsg] = useState("");
 
     // Check how many posts the user have
     let userPostsCount = 0;
@@ -164,8 +169,10 @@ const Post = () => {
                 const result = await addPost(postTitle, postContent);
                 setPostTitle("");
                 setPostContent("");
-                window.alert(result.message);
-                window.location.reload();
+                
+                setNotificationTitle("New Post")
+                setNotificationMsg(result.message);
+                setOpenNotificationModal(true);
             };
             submitPost();
         }
@@ -178,8 +185,10 @@ const Post = () => {
                 const result = await updatePost(postId, updatedTitle, updatedContent);
                 setPostId(null);
                 setUpdatedContent("");
-                window.alert(result.message);
-                window.location.reload();
+                
+                setNotificationTitle("Post Status")
+                setNotificationMsg(result.message);
+                setOpenNotificationModal(true);
             };
             changePost();
         }
@@ -222,12 +231,19 @@ const Post = () => {
     },[])
 /*END-------------------------------------------------USE EFFECT------------------------------------------ */
     
+    function closeNotification(){
+        setOpenNotificationModal(false);
+        window.location.reload();
+    }
+
     // Delete the post
     async function removePost(event){
         setOpenConfirmDeleteModal(false);
         const result = await deletePost(deletePostId);
-        window.alert(result.message);
-        if (result.success) window.location.reload();
+        setNotificationTitle("Post Status");
+        setNotificationMsg(result.message);
+        // if (result.success) window.location.reload();
+        setOpenNotificationModal(true);
     }
 
     // Convert time to mm/dd/yyyy
@@ -381,7 +397,7 @@ const Post = () => {
                                 <p>{posts.content}</p>
                                 <div className="choice-btn">
                                     <button data-pid={posts.pid} onClick={updatingPost}>Edit</button>
-                                    <button data-pid={posts.pid} onClick={confirmDeletePost}>Delete</button>
+                                    <button className="delete-btn" data-pid={posts.pid} onClick={confirmDeletePost}>Delete</button>
                                 </div>
                             </div>
                          </div>
@@ -396,7 +412,8 @@ const Post = () => {
             {openNewPostModal && <CreatePost closeCreateNewPost={closeCreateNewPost} title="Create a post" setNewPostInfo={setNewPostInfo} />}
             {editPost && <UpdatePost closeEdit={closeEdit} title="Edit Post" oldTitle={oldTitle} oldContent={oldContent}/>}
             {openConfirmDelete && <Confirmation closeModal={closeDeletePostModal} handleConfirm={removePost} title="Delete this post?" message="Are you sure you want to delete this post? This cannot be undone"/>}
-            
+            {openNotificationModal && <Notification closeModal={closeNotification} title={notificationTitle} message={notificationMsg}/>}
+
         </>
     )
 }

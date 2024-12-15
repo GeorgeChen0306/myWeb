@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/Modals.css"
+import Confirmation from "./Confirmation.jsx";
 
 const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
     const MAX_TITLE_LENGTH = 50;
@@ -12,6 +13,8 @@ const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
     const [newPostTitleLength, setNewPostTitleLength] = useState(0);
     const [newPostTextLength, setNewPostTextLength] = useState(0);
 
+    const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
     useEffect(() => {
         setNewTitle(oldTitle);
         setNewContent(oldContent);
@@ -20,7 +23,14 @@ const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
         setIsLoading(false);
     },[])
 
-    
+    function confirmUpdate(){
+        setOpenConfirmModal(true);
+    }
+
+    function closeNotification(){
+        setOpenConfirmModal(false);
+    }
+
     function update(){
         closeEdit(newTitle, newContent);
     }
@@ -79,11 +89,12 @@ const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
                            readOnly
                     />
                     <div className="footer">
-                        <button onClick={update}>Update post</button>
+                        <button onClick={confirmUpdate}>Update post</button>
                         <button className="cancel-btn" onClick={close}>Cancel</button>
                     </div>
                 </div>
             </div>
+            {openConfirmModal && <Confirmation closeModal={closeNotification} handleConfirm={update} title={"Update Post"} message={"Are you sure you want to update the post?"}/>}
         </>
     )
 }
