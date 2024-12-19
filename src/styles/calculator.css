@@ -1,0 +1,7 @@
+.calculator-container {
+    height: 800px;
+    width: 400px;
+    border: solid black;
+    display: flex;
+    justify-content: center;
+}

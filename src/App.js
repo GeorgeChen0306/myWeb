@@ -9,6 +9,7 @@ import Login from "./Pages/Login";
 import AdminHome from "./Pages/AdminHome";
 import MyProfile from "./Pages/Profile";
 import Post from "./Pages/PostsPage";
+import Calculator from "./Pages/Calculator"
 import { useRole } from "./context/Role";
 
 function App() {
@@ -197,6 +198,7 @@ function App() {
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/pokemon" element={<Pokemon />}></Route>
             <Route path="/posts" element={<Post />}></Route>
+            <Route path="/calculator" element={<Calculator />}></Route>
             <Route element={<ProtectedRoute />}>
               <Route path="/login" element={<Login />}></Route>
             </Route>

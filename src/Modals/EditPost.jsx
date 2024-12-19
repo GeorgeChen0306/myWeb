@@ -3,9 +3,11 @@ import "../styles/Modals.css"
 import Confirmation from "./Confirmation.jsx";
 
 const UpdatePost = ({closeEdit, title, oldTitle, oldContent}) => {
+    // Max length of the post title and content
     const MAX_TITLE_LENGTH = 50;
     const MAX_TEXT_LENGTH = 500;
 
+    // State managers
     const [newTitle, setNewTitle] = useState("");
     const [newContent, setNewContent] = useState("");
     const [isLoading, setIsLoading] = useState(true);

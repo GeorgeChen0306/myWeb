@@ -23,6 +23,7 @@ async function deleteUser(target, User){
 
 async function addNewUser(firstName, lastName, username, password, role, User){
     try{
+        role = "user";
         const user = await User.create({
             firstName: firstName,
             lastName: lastName,

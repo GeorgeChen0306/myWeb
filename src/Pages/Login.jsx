@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { useRole } from "../context/Role.js";
 import Nav from "../components/Nav.jsx"
+import "../styles/login.css"
+import Notification from "../Modals/Notification.jsx";
 
 const Login = () =>{
 
@@ -18,6 +20,11 @@ const Login = () =>{
     const [newAccountLastName, setNewAccountLastName] = useState("");
 
     const [errMsg, setErrMsg] = useState("");
+    const [signUpErrMsg ,setSignUpErrMsg] = useState("");
+
+    const [openNotification, setOpenNotification] = useState(false);
+    const [notificationTitle, setNotificationTitle] = useState("");
+    const [notificationMsg, setNotitificationMsg] = useState("");
 
     async function checkLogin(username, password){
         try{
@@ -36,23 +43,11 @@ const Login = () =>{
             }
     
             const result = await response.json();
-            if (result.success){
-                localStorage.setItem("LoginToken", result.token); 
-                updateRole(result.role);
-                updateUsername(username);
-                updateFirstName(result.firstName);
-                updateLastName(result.lastName);
-                if (result.role === "user") navigate("/user");
-                else if (result.role === "admin") navigate("/admin");
-            }
-            else {
-                console.log(result.message);
-                setErrMsg(result.message);
-            }
-            
+            return result;     
         }
         catch(error){
             console.error(error)
+            return ({success: false, message: "Error logging in"})
         }
     }
     
@@ -76,59 +71,187 @@ const Login = () =>{
             }
     
             const result = await response.json();
-    
-            if (result.success){
-                window.alert(result.message);
-                setNewAccountFirstName("");
-                setNewAccountLastName("");
-                setNewAccountUserName("");
-                setNewAccountPassword("");
-            }
-            else {
-                window.alert(result.message)
-            }    
+            return result;    
         }
         catch(error){
             console.error(error)
         }
     }
 
-    function login(e){
+    // Gets the login credentials and check for validation
+    async function login(e){
         e.preventDefault();
-        if (loginUserName === "" || loginPassword === "") {
-            window.alert("Please fill in both fields");
+        setErrMsg("");
+
+        var missingCredentials = [];
+        var missing = false;
+
+        if (loginUserName === ""){
+            missing = true;
+            missingCredentials.push("username");
+        }
+
+        if (loginPassword === ""){
+            missing = true;
+            missingCredentials.push("password");
+        }
+
+        if (missing){
+            var missingCredentialsMsg = "Please provide your "
+            if (missingCredentials.length > 1){
+                missingCredentialsMsg += missingCredentials.slice(0,-1).join("") + " and " + missingCredentials[1];
+            }
+            else {
+                missingCredentialsMsg += missingCredentials[0];
+            }
+            setErrMsg(missingCredentialsMsg);
             return;
         }
-        checkLogin(loginUserName, loginPassword)
+
+        const result = await checkLogin(loginUserName, loginPassword)
+
+        if (result.success){
+            localStorage.setItem("LoginToken", result.token); 
+            updateRole(result.role);
+            updateUsername(loginUserName);
+            updateFirstName(result.firstName);
+            updateLastName(result.lastName);
+            if (result.role === "user") navigate("/user");
+            else if (result.role === "admin") navigate("/admin");
+        }
+        else {
+            setErrMsg(result.message);
+        }
     }
 
-    function signUp(e){
+    async function signUp(e){
         e.preventDefault();
-        if (newAccountFirstName === "" || newAccountLastName === "" || newAccountUserName === "" || newAccountPassword === "") {
-            window.alert("Please fill in all fields");
+        setErrMsg("");
+
+        var missing = false;
+        var missingFields = [];
+
+        if (newAccountFirstName === "") {
+            missing = true;
+            missingFields.push("first name");
+        }
+        if (newAccountLastName === "") {
+            missing = true;
+            missingFields.push("last name");
+        }
+        if (newAccountUserName === "") {
+            missing = true;
+            missingFields.push("username");
+        }
+        if (newAccountPassword === "") {
+            missing = true;
+            missingFields.push("password");
+        }
+
+        if (missing) {
+            let missingText = "Missing: "
+
+            if (missingFields.length > 1) {
+                // Add "and" before the last missing field
+                missingText += missingFields.slice(0, -1).join(", ") + " and " + missingFields[missingFields.length - 1];
+            } else {
+                // Only one missing field
+                missingText += missingFields[0];
+            }
+            
+            setSignUpErrMsg(missingText);
             return;
         }
+            
+        var missingPasswordRequirements = [];
+        var badPassword = false;
 
         const checkForCapital = /[A-Z]/;
         const checkForSpecialChar = /[!@#$%_]/
         const checkForNum = /[0-9]/
 
-        //if (checkForCapital.test(newAccountPassword)) 
+        if (!checkForCapital.test(newAccountPassword)) {
+            badPassword = true;
+            missingPasswordRequirements.push("capital letter");
+        }
+        if (!checkForSpecialChar.test(newAccountPassword)) {
+            badPassword = true;
+            missingPasswordRequirements.push("special character");
+        }
+        if (!checkForNum.test(newAccountPassword)) {
+            badPassword = true;
+            missingPasswordRequirements.push("number");
+        }
+        if (newAccountPassword.length < 8) {
+            badPassword = true;
+            missingPasswordRequirements.push("minimum 8 characters");
+        }
 
-        createNewAccount(newAccountFirstName, newAccountLastName, newAccountUserName, newAccountPassword);
+        if (badPassword){
+            let missingPassword = "Password missing the following: ";
+            if (missingPasswordRequirements.length > 1){
+                missingPassword += missingPasswordRequirements.slice(0,-1).join(", ") + " and " + missingPasswordRequirements[missingPasswordRequirements.length-1];
+            }
+            else {
+                missingPassword += missingPasswordRequirements[0];
+            }
+            setSignUpErrMsg(missingPassword);
+            return;
+        }
+
+        const result = await createNewAccount(newAccountFirstName, newAccountLastName, newAccountUserName, newAccountPassword);
+
+        if (result.success){
+            setNewAccountFirstName("");
+            setNewAccountLastName("");
+            setNewAccountUserName("");
+            setNewAccountPassword("");
+
+            setNotificationTitle("Account Creation");
+            setNotitificationMsg(result.message);
+            setOpenNotification(true)
+        }
+        else {
+            setSignUpErrMsg(result.message);
+        }
     }
+
+    function closeNotification(){
+        setOpenNotification(false);
+    }
+
+    function updateSignUpFirstName(e){
+        setNewAccountFirstName(e.target.value);
+    }
+
+    function updateSignUpLastName(e){
+        setNewAccountLastName(e.target.value)
+    }
+
+    function updateSignUpUsername(e){
+        setNewAccountUserName(e.target.value)
+    }
+    
+    function updateSignUpPassword(e){
+        setNewAccountPassword(e.target.value);
+    }
+
 
     function switchPage(e){
         e.preventDefault();
         if (!noAccount) {
             setLoginUserName("");
             setLoginPassword("");
+            setErrMsg("");
             setNoAccount(true)
             return;
         }
         else {
+            setNewAccountFirstName("");
+            setNewAccountLastName("");
             setNewAccountUserName("");
             setNewAccountPassword("");
+            setSignUpErrMsg("");
             setNoAccount(false)
             return;
         }
@@ -137,77 +260,100 @@ const Login = () =>{
     return (
         <>
             <Nav />
+            <div className="background">
             {noAccount ?
-            <>
-                <h1>Login Here!</h1>
-                <input id="message"
-                       type="text"
-                       value = {errMsg}
-                       readOnly
-                       style = {{width: "360px"}}
-                />
-                <form>
-                    <input id="username" 
-                           type="username"
-                           value= {loginUserName}
-                           placeholder="Username"
-                           onChange= {(e) => setLoginUserName(e.target.value)}
-                     />
-                    <br />
-                    <input id="password" 
-                           type="password"
-                           value= {loginPassword}
-                           placeholder="Password" 
-                           onChange= {(e) => setLoginPassword(e.target.value)}
-                    />
-                    <br />
-                    <button onClick={login}>Login!</button>
-                </form>
-                
-                <br />
-                <br />
-                <button onClick={(e) => switchPage(e)}>No Account? Click here to sign up!</button>
-            </>
+                <>
+                    <h1>Login Here!</h1>
+                    <div className="login-container">
+                        <div className="login-err-msg">
+                            <input id="message"
+                                type="text"
+                                value = {errMsg}
+                                readOnly
+                            />
+                        </div>
+                        <div className="login-credentials">
+                            <form>
+                                <label htmlFor="username">username: </label>
+                                <input id="username" 
+                                    type="username"
+                                    value= {loginUserName}
+                                    placeholder="Enter your username"
+                                    onChange= {(e) => setLoginUserName(e.target.value)}
+                                />
+                                <br />
+                                
+                                <label htmlFor="password">password: </label>
+                                <input id="password" 
+                                    type="password"
+                                    value= {loginPassword}
+                                    placeholder="Enter your password" 
+                                    onChange= {(e) => setLoginPassword(e.target.value)}
+                                />
+                                <br />
+
+                                <button onClick={login}>Login!</button>
+                            </form>
+                        </div>
+                        <button onClick={(e) => switchPage(e)}>No Account? Click here to sign up!</button>
+                    </div>
+                </>
             :
             <>
                 <h1>Sign Up Here!</h1>
-                <form>
-                    <input id="firstname" 
-                           type="firstname"
-                           value= {newAccountFirstName} 
-                           placeholder="First Name"
-                           onChange = {(e) => setNewAccountFirstName(e.target.value)}
-                    />
-                    <br />
-                    <input id="lastname" 
-                           type="lastname"
-                           value= {newAccountLastName} 
-                           placeholder="Last Name"
-                           onChange = {(e) => setNewAccountLastName(e.target.value)}
-                    />
-                    <br />
-                    <input id="username1" 
-                           type="username"
-                           value= {newAccountUserName} 
-                           placeholder="Username"
-                           onChange = {(e) => setNewAccountUserName(e.target.value)}
-                    />
-                    <br />
-                    <input id="password1" 
-                           type="password"
-                           value= {newAccountPassword} 
-                           placeholder="Password"
-                           onChange= {(e) => setNewAccountPassword(e.target.value)}       
-                    />
-                    <br />
-                    <button onClick={signUp}>Sign Up!</button>
-                    <br />
-                    <br />
-                    <br />
+                <div className="sign-up-container">
+                    <form>
+                        <div className="sign-up-err-msg">
+                            <input value={signUpErrMsg} readOnly />
+                        </div>
+                        <label htmlFor="firstname">First Name: </label>
+                        <input id="firstname" 
+                            type="firstname"
+                            value= {newAccountFirstName} 
+                            placeholder="Enter your first name"
+                            onChange = {updateSignUpFirstName}
+                        />
+                        <br />
+
+                        <label htmlFor="lastname">Last Name: </label>
+                        <input id="lastname" 
+                            type="lastname"
+                            value= {newAccountLastName} 
+                            placeholder="Enter your last name"
+                            onChange = {updateSignUpLastName}
+                        />
+                        <br />
+
+                        <label htmlFor="username1">Username: </label>
+                        <input id="username1" 
+                            type="username"
+                            value= {newAccountUserName} 
+                            placeholder="Enter your username"
+                            onChange = {updateSignUpUsername}
+                        />
+                        <br />
+
+                        <label htmlFor="password1">Password: </label>
+                        <input id="password1" 
+                            type="password"
+                            value= {newAccountPassword} 
+                            placeholder="Enter your password"
+                            onChange= {updateSignUpPassword}
+                        />
+                        <br />
+                        <button onClick={signUp}>Sign Up!</button>
+                    </form>
                     <button onClick={(e) => switchPage(e)}>Go Back</button>
-                </form>
+                    <p>Password must meet the following requirements:</p>
+                    <p>Contain at least one capital letter</p>
+                    <p>Contain at least one number</p>
+                    <p>Contain at least one special character</p>
+                    <p>Must be at least 8 characters</p>
+                </div>
             </>
             }
+            </div>
+            {openNotification && <Notification closeModal={closeNotification} title={notificationTitle} message={notificationMsg}/>}
         </>
     )
 }

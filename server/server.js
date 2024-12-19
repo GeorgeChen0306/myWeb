@@ -66,13 +66,12 @@ async function addUser(newUser){
             password = newUser.password
         }
 
-        console.log(password)
         const user = await createUser(newUser.firstName, newUser.lastName, newUser.user, password, newUser.role, User);
         return user;
     }
     catch (error){
         console.error(error);
-        return ({success: false});
+        return ({success: false, message: "Unknown error"});
     }
 }
 

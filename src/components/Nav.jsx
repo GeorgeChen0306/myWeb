@@ -11,6 +11,7 @@ const Nav = () => {
                     {name: "Web Home", path: "/"},
                     {name: "Pokemon", path: "/pokemon"},
                     {name: "Posts", path: "/posts"},
+                    {name: "Calculator", path: "/calculator"},
                     {name: "Login", path: "/login"}
                 ],
 
@@ -19,6 +20,7 @@ const Nav = () => {
                 {name: "Home", path: "/user"},
                 {name: "Pokemon", path: "/pokemon"},
                 {name: "Posts", path: "/posts"},
+                {name: "Calculator", path: "/calculator"},
                 {name: "My Profile", path: "/user/profile"}
               ],
 
@@ -28,6 +30,7 @@ const Nav = () => {
                 {name: "Pokemon", path: "/pokemon"},
                 {name: "Posts", path: "/posts"},
                 {name: "Users", path: "/admin/users"},
+                {name: "Calculator", path: "/calculator"},
                 {name: "My Profile", path: "/admin/profile"}
                ]
     }

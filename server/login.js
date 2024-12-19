@@ -21,7 +21,6 @@ async function verifyCredentials(username, password, User, secretKey){
         }
         else{
             const result1 = await User.updateOne({user: username}, {loginAttempt: check[0]["loginAttempt"] + 1})
-            console.log("Wrong password")
             return ({
                         success: false, 
                         message: "Wrong password"
@@ -29,7 +28,6 @@ async function verifyCredentials(username, password, User, secretKey){
         }
     }
     else{
-        console.log("No matched username");
         return ({
                     success: false,
                     message: "No matched username"

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Nav from "../components/Nav";
+import "../styles/pokemon.css";
 
 const Pokemon = () => {
 
@@ -18,26 +19,27 @@ const Pokemon = () => {
     return(
         <>
             <Nav />
-            <h1>Welcome to the Pokemon Page</h1>
-            <h3>Select a pokemon from the list below to display data about the pokemon</h3>
-            <select name="pokemon" id="pokemon" width="500">
-                <option value="pikachu">Pikachu</option>
-                <option value="charizard">Charizard</option>
-                <option value="blastoise">Blastoise</option>
-                <option value="venusaur">Venusaur</option>
-            </select>
-            <button onClick={getData}>Ok</button>
+            <div className="background">
+                <h1>Welcome to the Pokemon Page</h1>
+                <h3>Select a pokemon from the list below to display data about the pokemon</h3>
+                <select name="pokemon" id="pokemon" width="500">
+                    <option value="pikachu">Pikachu</option>
+                    <option value="charizard">Charizard</option>
+                    <option value="blastoise">Blastoise</option>
+                    <option value="venusaur">Venusaur</option>
+                </select>
+                <button onClick={getData}>Ok</button>
 
-            {showData ? 
-            <p>{pokemonData.name} weight : {pokemonData.weight}</p>
-            :
-            <>
-            {/* {<p>? weight : N/A</p>} */}
-            </>
-            }
+                {showData ? 
+                <p>{pokemonData.name} weight : {pokemonData.weight}</p>
+                :
+                <>
+                {/* {<p>? weight : N/A</p>} */}
+                </>
+                }
+            </div>
         </>
     )
-
 }
 
 export default Pokemon

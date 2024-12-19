@@ -1,0 +1,92 @@
+.background {
+    min-height: 100vh;
+    background-color: grey;
+    display: flex;
+    justify-content: top;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-container {
+    background-color: skyblue;
+    height: 300px;
+    width: 500px;
+    border: solid black;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-err-msg input{
+    height: 50px;
+    width: 300px;
+    color: red;
+    background-color: skyblue;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.login-credentials button {
+    padding: 5px 10px 10px;
+    margin-top: 10px;
+    background-color: aqua;
+    color: darkblue;
+}
+
+.login-credentials input {
+    height: 20px;
+    width: 300px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.sign-up-container {
+    background-color: skyblue;
+    height: 500px;
+    width: 600px;
+    border: solid black;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-up-container input{
+    height: 20px;
+    width: 400px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.sign-up-container p {
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+button {
+    background-color: orangered;
+    color: darkblue;
+    padding: 5px 10px 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.sign-up-err-msg {
+    font-size: 12px;
+    background-color: skyblue;
+    border: none;
+    outline: none;
+}
+
+.sign-up-err-msg input {
+    width: 95%;
+    outline: none;
+    border: none;
+    background-color: inherit;
+    color: red;
+    font-size: 12px;
+    text-align: center;
+}
+/* #password1 {
+    border: solid red;
+} */
