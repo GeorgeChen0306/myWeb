@@ -1,7 +1,55 @@
-.calculator-container {
-    height: 800px;
-    width: 400px;
-    border: solid black;
+.calculator-background {
+    min-height: 100vh;
+    background-color: aquamarine;
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.calculator-container {
+    height: 400px;
+    width: 300px;
+    border: solid black;
+    display: flex;
+    justify-content: top;
+    align-items: center;
+    flex-direction: column;
+}
+
+.calculator-input-display {
+    width: inherit;
+    height: 20%;
+    justify-content: center;
+    align-items: center;
+    text-align: right;
+}
+
+.calculator-input-display input{
+    width: 95%;
+    height: 95%;  
+}
+
+.calculator-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.calculator-row button {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 15px;
+    margin: 5px;
+    text-align: center;
+    border: 2px black;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+}
+
+.calculator-row button.expand {
+    flex-basis: 100%;
+    background-color: red;
 }

@@ -162,6 +162,36 @@ const Login = () =>{
             setSignUpErrMsg(missingText);
             return;
         }
+
+        var illegalCharInFields = [];
+        var illegal = false;
+        const illegalChar = /^[a-zA-Z]+$/;
+        const illegalCharInUserName = /[^a-zA-Z0-9_]/
+
+        if (!illegalChar.test(newAccountFirstName)){
+            illegal = true;
+            illegalCharInFields.push("first name");
+        }
+        if (!illegalChar.test(newAccountLastName)){
+            illegal = true;
+            illegalCharInFields.push("last name");
+        }
+        if (illegalCharInUserName.test(newAccountUserName)){
+            illegal = true;
+            illegalCharInFields.push("username");
+        }
+
+        if (illegal){
+            var invalidCharsText = "Illegal characters in ";
+            if (illegalCharInFields.length > 1){
+                invalidCharsText += illegalCharInFields.slice(0,-1).join(", ") + " and " + illegalCharInFields[illegalCharInFields.length-1];
+            }
+            else {
+                invalidCharsText += illegalCharInFields[0];
+            }
+            setSignUpErrMsg(invalidCharsText);
+            return;
+        }
             
         var missingPasswordRequirements = [];
         var badPassword = false;

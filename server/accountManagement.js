@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { addNewUser } from "./CRUD.js";
-import { checkNewAccountInputValidation } from "./inputValidation.js";
+import { checkNewAccountInputValidation, checkForIllegalChars } from "./inputValidation.js";
 
 function checkPasswordRequirements(newAccountPassword){
     var missingPasswordRequirements = [];
@@ -76,6 +76,11 @@ async function createUser(firstName, lastName, username, password, role, User){
     const validationResult = checkNewAccountInputValidation(firstName, lastName, username);
     if (validationResult.missing){
         return ({success: false, message: validationResult.message});
+    }
+
+    const invalidChars = checkForIllegalChars(firstName, lastName, username);
+    if (invalidChars.invalid){
+        return ({success: false, message: invalidChars.message});
     }
 
     var saltRounds = 10;
