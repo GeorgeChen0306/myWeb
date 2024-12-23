@@ -34,7 +34,6 @@ const Calculator = () => {
     }
 
     function btnClicked(e){
-        var btnValue = e.target;
     }
 
     function numBtnClicked(e){
