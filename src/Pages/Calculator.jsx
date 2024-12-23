@@ -41,7 +41,7 @@ const Calculator = () => {
         var btnValue = e.target;
         var num = btnValue.dataset.num;
         if (!newInput){
-            if (output === 0){
+            if (output === "0"){
                 setOutput(num);
             }
             else {
