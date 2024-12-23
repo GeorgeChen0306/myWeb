@@ -6,6 +6,7 @@ const AdminHome = () => {
         <>
             <Nav/>
             <h1>Admin Home Page</h1>
+            <p>Hello and welcome to the admin home page.</p>
         </>
     )
 }

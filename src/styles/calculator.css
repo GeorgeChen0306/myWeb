@@ -1,55 +1,45 @@
-.calculator-background {
+.cal-grid-background {
     min-height: 100vh;
-    background-color: aquamarine;
+    background-color: lightblue;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.calculator-container {
+.cal-grid-container {
+    border: solid black;
     height: 400px;
     width: 300px;
-    border: solid black;
-    display: flex;
-    justify-content: top;
-    align-items: center;
-    flex-direction: column;
 }
 
-.calculator-input-display {
-    width: inherit;
-    height: 20%;
-    justify-content: center;
-    align-items: center;
-    text-align: right;
+.cal-grid-output {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    height: 15%;
 }
 
-.calculator-input-display input{
-    width: 95%;
-    height: 95%;  
+.cal-grid-output input {
+    outline: none;
+    border: none;
+    text-align: end;
+    font-size: 24px;
 }
 
-.calculator-row {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Example grid */
     gap: 10px;
 }
 
-.calculator-row button {
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 15px;
-    margin: 5px;
-    text-align: center;
-    border: 2px black;
-    border-radius: 5px;
-    font-size: 1rem;
-    background-color: white;
-    cursor: pointer;
+.cal-grid-expand {
+    grid-row: span 2;
+    background-color: yellow;
 }
 
-.calculator-row button.expand {
-    flex-basis: 100%;
-    background-color: red;
+.cal-grid button {
+    background-color: white;
+}
+
+.cal-grid button:hover {
+    opacity: 0.6;
 }

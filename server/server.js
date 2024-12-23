@@ -118,7 +118,7 @@ app.get("/api/users", async (req, res) => {
 // Delete a specific user by their username
 app.delete("/api/delete", async (req, res) => {
     try{
-        const result = await deleteUser(req.body);
+        const result = await deleteUser(req.body, User);
         res.json(result);
     }
     catch (error){

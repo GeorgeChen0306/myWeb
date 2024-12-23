@@ -81,7 +81,6 @@ const Users = () => {
             window.alert("Please type the username to delete");
             return;
         }
-        console.log(user);
         await deleteUser(user);
     }
 

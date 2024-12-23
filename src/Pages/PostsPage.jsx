@@ -58,7 +58,7 @@ const Post = () => {
             }
         })
         if (!response.ok){
-            console.log("Error retrieving posts")
+            console.error("Error retrieving posts")
         }
 
         const postsData = await response.json();
