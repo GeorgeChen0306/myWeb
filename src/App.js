@@ -10,7 +10,6 @@ import AdminHome from "./Pages/AdminHome";
 import MyProfile from "./Pages/Profile";
 import Post from "./Pages/PostsPage";
 import Calculator from "./Pages/Calculator"
-import CalculatorGrid from "./Pages/Calculator";
 import { useRole } from "./context/Role";
 
 function App() {
