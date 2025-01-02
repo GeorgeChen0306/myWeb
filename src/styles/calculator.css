@@ -25,6 +25,13 @@
     font-size: 24px;
 }
 
+.cal-grid-output input.expression {
+    outline: none;
+    border: none;
+    text-align: end;
+    font-size: 12px;
+}
+
 .cal-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* Example grid */
@@ -33,11 +40,18 @@
 
 .cal-grid-expand {
     grid-row: span 2;
-    background-color: yellow;
 }
 
 .cal-grid button {
     background-color: white;
+}
+
+button.cal-grid-expand {
+    background-color: orange;
+}
+
+.cal-grid button.operator {
+    background-color: orange;
 }
 
 .cal-grid button:hover {
